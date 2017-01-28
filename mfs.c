@@ -142,8 +142,14 @@ int main()
     // 4. /bin
     //
     // NOTE: If cmd is NULL it will not be caught by the other if statements;
-    // therefore, we need to be able to terminate the child process in the case
-    // where all of the exec() calls fail. This is the purpose of the "return 0;" line
+    // therefore, we need to be able to terminate the child process in the cases
+    // where all of the exec() calls fail and where none of them execute.
+    // This is the purpose of "(cmd != NULL)" and "return 0;"
+    //
+    // NOTE: We do not want the child process to do anything when the user enters "cd".
+    // This is the purpose of "(strcmp(cmd, "cd") != 0)".
+    // If you wish to optimize code later, it would be better to not create a child
+    // process if the "cd" command is entered.
     else if(pid == 0)
     {
       if ((cmd != NULL) && (strcmp(cmd, "cd") != 0))
@@ -160,7 +166,9 @@ int main()
     else
     {
       wait(&pid);
-      chdir(token[1]);
+      if (strcmp(cmd, "cd") == 0){
+        chdir(token[1]);
+      }
     }
     // END STUDENT CODE
 
