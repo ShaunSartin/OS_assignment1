@@ -166,8 +166,10 @@ int main()
     else
     {
       wait(&pid);
-      if (strcmp(cmd, "cd") == 0){
-        chdir(token[1]);
+      if (cmd != NULL){
+        if (strcmp(cmd, "cd") == 0){
+          chdir(token[1]);
+        }
       }
     }
     // END STUDENT CODE
