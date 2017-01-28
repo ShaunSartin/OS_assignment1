@@ -146,7 +146,7 @@ int main()
     // where all of the exec() calls fail. This is the purpose of the "return 0;" line
     else if(pid == 0)
     {
-      if (cmd != NULL)
+      if ((cmd != NULL) && (strcmp(cmd, "cd") != 0))
       {
         execv(cmd, token);
         execv(path2, token);
@@ -160,6 +160,7 @@ int main()
     else
     {
       wait(&pid);
+      chdir(token[1]);
     }
     // END STUDENT CODE
 
