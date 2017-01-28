@@ -91,8 +91,9 @@ int main()
 
     // BEGIN STUDENT CODE
     // Copy command arguments into a new array, so that we can pass it to exec()
+    // TODO exec() seems to need the original array for arguments to work. Delete this code later
     char *exec_arg[MAX_NUM_ARGUMENTS - 1];
-    for( int i = 1; i < MAX_NUM_ARGUMENTS; i++ )
+    for(int i = 1; i < MAX_NUM_ARGUMENTS; i++)
     {
       exec_arg[i - 1] = token[i];
     }
@@ -115,15 +116,22 @@ int main()
     //******* END DECLARATION OF VARIABLES********
 
     //Concat the inputted command to each of the path strings
-    //TODO add if statement for when cmd is null. It causes seg. fault
-    // strcat(path2, cmd);
-    // strcat(path3, cmd);
-    // strcat(path4, cmd);
+    //If cmd is NULL a seg-fault will be caused when using strcat()
+    if (cmd != NULL)
+    {
+      if ((strcmp(cmd, "quit") == 0) || strcmp(cmd, "exit") == 0)
+      {
+        return 0;
+      }
+      strcat(path2, cmd);
+      strcat(path3, cmd);
+      strcat(path4, cmd);
+    }
 
-    if( pid == -1 )
+    if(pid == -1)
     {
       printf("An error occurred while using fork()\n");
-      return(-1);
+      return -1;
     }
 
     // The child process will execute the entered command, if possible
@@ -132,14 +140,21 @@ int main()
     // 2. /usr/local/bin
     // 3. /usr/bin
     // 4. /bin
-    else if( pid == 0 )
+    //
+    // NOTE: If cmd is NULL it will not be caught by the other if statements;
+    // therefore, we need to be able to terminate the child process in the case
+    // where all of the exec() calls fail. This is the purpose of the "return 0;" line
+    else if(pid == 0)
     {
-      execv(cmd, exec_arg);
-      execv(path2, exec_arg);
-      execv(path3, exec_arg);
-      execv(path4, exec_arg);
-      //TODO remove printf() see RQ 006
-      printf("All exec() function calls failed.\n");
+      if (cmd != NULL)
+      {
+        execv(cmd, token);
+        execv(path2, token);
+        execv(path3, token);
+        execv(path4, token);
+        printf("%s: Command not found.\n", cmd);
+      }
+      return 0;
     }
 
     else
@@ -151,11 +166,11 @@ int main()
     // Now print the tokenized input as a debug check
     // \TODO Remove this code and replace with your shell functionality
 
-    int token_index  = 0;
-    for( token_index = 0; token_index < token_count; token_index ++ )
-    {
-      printf("token[%d] = %s\n", token_index, token[token_index] );
-    }
+    // int token_index  = 0;
+    // for( token_index = 0; token_index < token_count; token_index ++ )
+    // {
+    //   printf("token[%d] = %s\n", token_index, token[token_index] );
+    // }
 
     free( working_root );
 
