@@ -42,12 +42,53 @@
 
 #define MAX_COMMAND_SIZE 255    // The maximum command-line size
 
-#define MAX_NUM_ARGUMENTS 5     // Mav shell only supports five arguments
+#define MAX_NUM_ARGUMENTS 10     // Mav shell only supports ten arguments
+
+#define MAX_PID_COUNT 10         // The maximum number of the most recent process ids
+
+//TODO describe this function
+void updatePIDarray(pid_t pidToStore, pid_t *array)
+{
+
+  if (array[MAX_PID_COUNT - 1] != 0)
+  {
+    printf("Array is full\n");
+    //shift data
+  }
+  else
+  {
+      // array is not filled yet.
+      // Find the first occurrence of 0, and store the new pid in that index
+      for(int i = 0; i < MAX_PID_COUNT; i++)
+      {
+        if(array[i] == 0)
+        {
+          array[i] = pidToStore;
+          break;
+        }
+      }
+  }
+}
+
+//TODO add funciton description
+void printArray(pid_t *array)
+{
+  int i = 0;
+  while((array[i] != 0) && (i < MAX_PID_COUNT))
+  {
+    printf("%d\n", array[i]);
+    i++;
+  }
+}
 
 int main()
 {
 
   char * cmd_str = (char*) malloc( MAX_COMMAND_SIZE );
+
+  // Create an array to keep track of last 10 PIDs
+  // NOTE: The following line is student written
+  pid_t pid_array[MAX_PID_COUNT] = {0,0,0,0,0,0,0,0,0,0};
 
   while( 1 )
   {
@@ -89,19 +130,9 @@ int main()
         token_count++;
     }
 
-    // BEGIN STUDENT CODE
-    // Copy command arguments into a new array, so that we can pass it to exec()
-    // TODO exec() seems to need the original array for arguments to work. Delete this code later
-    char *exec_arg[MAX_NUM_ARGUMENTS - 1];
-    for(int i = 1; i < MAX_NUM_ARGUMENTS; i++)
-    {
-      exec_arg[i - 1] = token[i];
-    }
+    // BEGIN STUDENT CODE IN MAIN()
 
-    //******* BEGIN DECLARATION OF VARIABLES********
-
-    // Create a new process so that we can call exec() and keep the shell running
-    pid_t pid = fork();
+    //******* BEGIN STUDENT DECLARATION OF VARIABLES********
 
     // Rename/Relocate data, so that the variable name is more intuitive
     char *cmd = token[0];
@@ -113,7 +144,10 @@ int main()
     char path3[30] = "/usr/bin/";
     char path4[30] = "/bin/";
 
-    //******* END DECLARATION OF VARIABLES********
+    // Create a new process so that we can call exec() and keep the shell running
+    pid_t pid = fork();
+
+    //******* END STUDENT DECLARATION OF VARIABLES********
 
     //Concat the inputted command to each of the path strings
     //If cmd is NULL a seg-fault will be caused when using strcat()
@@ -152,7 +186,7 @@ int main()
     // process if the "cd" command is entered.
     else if(pid == 0)
     {
-      if ((cmd != NULL) && (strcmp(cmd, "cd") != 0))
+      if ((cmd != NULL) && (strcmp(cmd, "cd") != 0) && (strcmp(cmd, "showpid") != 0))
       {
         execv(cmd, token);
         execv(path2, token);
@@ -163,16 +197,27 @@ int main()
       return 0;
     }
 
+    // TODO If cd fails (see if there is a return value), print out "No such directory"
     else
     {
-      wait(&pid);
-      if (cmd != NULL){
-        if (strcmp(cmd, "cd") == 0){
+      int childStatus;
+      wait(&childStatus);
+
+      updatePIDarray(pid, pid_array);
+
+      if (cmd != NULL)
+      {
+        if (strcmp(cmd, "cd") == 0)
+        {
           chdir(token[1]);
+        }
+        else if(strcmp(cmd, "showpid") == 0)
+        {
+          printArray(pid_array);
         }
       }
     }
-    // END STUDENT CODE
+    // END STUDENT CODE IN MAIN()
 
     // Now print the tokenized input as a debug check
     // \TODO Remove this code and replace with your shell functionality
