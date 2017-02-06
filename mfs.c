@@ -52,8 +52,13 @@ void updatePIDarray(pid_t pidToStore, pid_t *array)
 
   if (array[MAX_PID_COUNT - 1] != 0)
   {
+    // Shift data to left
     printf("Array is full\n");
-    //shift data
+    for(int i = 0; i < (MAX_PID_COUNT - 1); i++)
+    {
+      array[i] = array[i+1];
+    }
+    array[MAX_PID_COUNT - 1] = pidToStore;
   }
   else
   {
