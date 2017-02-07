@@ -53,7 +53,6 @@ void updatePIDarray(pid_t pidToStore, pid_t *array)
   if (array[MAX_PID_COUNT - 1] != 0)
   {
     // Shift data to left
-    printf("Array is full\n");
     for(int i = 0; i < (MAX_PID_COUNT - 1); i++)
     {
       array[i] = array[i+1];
@@ -206,6 +205,7 @@ int main()
     else
     {
       int childStatus;
+      char dirStatus;
       wait(&childStatus);
 
       updatePIDarray(pid, pid_array);
@@ -214,7 +214,11 @@ int main()
       {
         if (strcmp(cmd, "cd") == 0)
         {
-          chdir(token[1]);
+          dirStatus = chdir(token[1]);
+          if (dirStatus == -1)
+          {
+              perror(token[1]);
+          }
         }
         else if(strcmp(cmd, "showpid") == 0)
         {
