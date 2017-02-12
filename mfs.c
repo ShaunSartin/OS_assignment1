@@ -27,6 +27,8 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#define _GNU_SOURCE
+
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
@@ -35,7 +37,6 @@
 #include <string.h>
 #include <signal.h>
 
-#define _XOPEN_SOURCE 500
 #define WHITESPACE " \t\n"      // We want to split our command line up into tokens
                                 // so we need to define what delimits our tokens.
                                 // In this case  white space

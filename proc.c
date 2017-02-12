@@ -7,7 +7,7 @@
 
 //TODO ADD Description
 void printProc(float userTime, float systemTime, float idleTime, int ctxtSwitches,
-  int processCreations, float totalMem, float freeMem, float diskStats)
+  int processCreations, float totalMem, float freeMem, float diskStats, float uptime)
 {
   float totalTime = userTime + systemTime + idleTime;
   float userPercent = (userTime / totalTime) * 100;
@@ -15,13 +15,17 @@ void printProc(float userTime, float systemTime, float idleTime, int ctxtSwitche
   float idlePercent = (idleTime / totalTime) * 100;
   float memPercent = (freeMem / totalMem) * 100;
 
-  printf("userTime: %f%%\n", userPercent);
-  printf("systemTime: %f%%\n", systemPercent);
-  printf("idleTime: %f%%\n", idlePercent);
-  printf("freeMem: %d kB(%f%%)\n", (int) freeMem, memPercent);
-  printf("diskStats: %d\n", (int) diskStats);
-  printf("ctxtSwitches: %d\n", ctxtSwitches);
-  printf("processCreations: %d\n", processCreations);
+  float diskRate = (diskStats / uptime);
+  float ctxtRate = (ctxtSwitches / uptime);
+  float processRate = (processCreations / uptime);
+
+  printf("Percentage of time in user-mode: %f%%\n", userPercent);
+  printf("Percentage of time in system-mode: %f%%\n", systemPercent);
+  printf("Percentage of time spent idling: %f%%\n", idlePercent);
+  printf("Amount of free memory in RAM: %d kB (%f%%)\n", (int) freeMem, memPercent);
+  printf("Number of disk reads/writes per second: %f\n", diskRate);
+  printf("Number of context switches per second: %f\n", ctxtRate);
+  printf("Number of processes created per second: %f\n", processRate);
 }
 
 int main(int argc, char** argv)
@@ -34,6 +38,7 @@ int main(int argc, char** argv)
   char uptimeString[MAX_STRING_LENGTH];
   char dummyString[MAX_STRING_LENGTH];
 
+  int uptime;
   int userTime;
   int systemTime;
   int idleTime;
@@ -137,13 +142,27 @@ int main(int argc, char** argv)
         // Close the diskstats file
         fclose(filePointer);
 
-        printProc(userTime, systemTime, idleTime, ctxtSwitches, processCreations, totalMem, freeMem, diskStats);
+        // Open the uptime file
+        filePointer = fopen("/proc/uptime", "r");
+        if (filePointer == NULL)
+        {
+          printf("Failed to open uptime file.\n");
+          return -1;
+        }
+        fscanf(filePointer, "%d", &uptime);
+
+        // Close the uptime file
+        fclose(filePointer);
+
+        printProc(userTime, systemTime, idleTime, ctxtSwitches, processCreations,
+          totalMem, freeMem, diskStats, uptime);
 
         sleep(sleepTime);
         printf("\n");
     }
   }
 
+  // This 'else' block holds the default functionality of the program
   else
   {
     //Start working with data in cpuinfo file
