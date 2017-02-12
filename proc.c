@@ -155,7 +155,8 @@ int main(int argc, char** argv)
     }
 
     // Skip past the first 4 lines. The information we need is on the 5th line.
-    for(int lineCount = 1; lineCount < 5; lineCount++)
+    int lineCount;
+    for(lineCount = 1; lineCount < 5; lineCount++)
     {
       fgets(dummyString, MAX_STRING_LENGTH, filePointer);
     }

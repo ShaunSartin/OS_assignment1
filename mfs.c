@@ -35,6 +35,7 @@
 #include <string.h>
 #include <signal.h>
 
+#define _XOPEN_SOURCE 500
 #define WHITESPACE " \t\n"      // We want to split our command line up into tokens
                                 // so we need to define what delimits our tokens.
                                 // In this case  white space
@@ -49,11 +50,12 @@
 //TODO describe this function
 void updatePIDarray(pid_t pidToStore, pid_t *array)
 {
+  int i;
 
   if (array[MAX_PID_COUNT - 1] != 0)
   {
     // Shift data to left
-    for(int i = 0; i < (MAX_PID_COUNT - 1); i++)
+    for(i = 0; i < (MAX_PID_COUNT - 1); i++)
     {
       array[i] = array[i+1];
     }
@@ -63,7 +65,7 @@ void updatePIDarray(pid_t pidToStore, pid_t *array)
   {
       // array is not filled yet.
       // Find the first occurrence of 0, and store the new pid in that index
-      for(int i = 0; i < MAX_PID_COUNT; i++)
+      for(i = 0; i < MAX_PID_COUNT; i++)
       {
         if(array[i] == 0)
         {
