@@ -1,8 +1,0 @@
-To execute proc.c in its 'verbose mode', you must only specify 1 parameter.
-
-Here are 2 lines of command-line code to clarify:
-
-gcc proc.c
-./a.out 5
-
-Using the code above, the proc program should now begin printing in 5-second intervals. 
