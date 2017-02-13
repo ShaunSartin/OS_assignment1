@@ -56,9 +56,9 @@ void printProc(float userTime, float systemTime, float idleTime, float ctxtSwitc
   printf("Percentage of time in system-mode: %f%%\n", systemPercent);
   printf("Percentage of time spent idling: %f%%\n", idlePercent);
   printf("Amount of free memory in RAM: %d kB (%f%%)\n", (int) freeMem, memPercent);
-  printf("Number of disk reads/writes per second: %f\n", diskRate);
-  printf("Number of context switches per second: %f\n", ctxtRate);
-  printf("Number of processes created per second: %f\n", processRate);
+  printf("Number of disk reads/writes per second (since last boot): %f\n", diskRate);
+  printf("Number of context switches per second (since last boot): %f\n", ctxtRate);
+  printf("Number of processes created per second (since last boot): %f\n", processRate);
 }
 
 int main(int argc, char** argv)
