@@ -4,7 +4,7 @@
  * Programming Assignment 1 (Mav Shell)
  * Description: A simple command shell which uses fork() and exec() to spawn
  * other processes. The 'showpid' command shall display a list of process ids
- * that have been forked from the process. 
+ * that have been forked from the process.
  */
 
 // The MIT License (MIT)
@@ -50,11 +50,22 @@
 
 #define MAX_PID_COUNT 10         // The maximum number of the most recent process ids
 
-//TODO describe this function
+/*
+ * Function: updatePIDarray
+ * Parameter 1: pidToStore - A pid_t variable representing the most recently forked
+ * process' id number.
+ * Parameter 2: array - A pointer to a pid_t array of size MAX_PID_COUNT.
+ * This array holds the most recently forked processes id's from oldest to newest.
+ * Description: Appends the pidToStore to the appropriate position in the array
+ * of most recently forked processes id's.
+ */
 void updatePIDarray(pid_t pidToStore, pid_t *array)
 {
   int i;
 
+  // If the array is full, shift all the data to the left by one index.
+  // The value originally stored in the 0th index will 'disappear',
+  // and the new pid will be stored in the last index.
   if (array[MAX_PID_COUNT - 1] != 0)
   {
     // Shift data to left
@@ -64,10 +75,11 @@ void updatePIDarray(pid_t pidToStore, pid_t *array)
     }
     array[MAX_PID_COUNT - 1] = pidToStore;
   }
+
+  // If the array is not full, find the first occurrence of a '0',
+  // then store the new pid in that index.
   else
   {
-      // array is not filled yet.
-      // Find the first occurrence of 0, and store the new pid in that index
       for(i = 0; i < MAX_PID_COUNT; i++)
       {
         if(array[i] == 0)
@@ -79,7 +91,13 @@ void updatePIDarray(pid_t pidToStore, pid_t *array)
   }
 }
 
-//TODO add funciton description
+/* Function: printArray
+ * Parameter 1: array - A pointer to a pid_t array of size MAX_PID_COUNT.
+ * This array holds the most recently forked processes id's from oldest to newest.
+ * Description: This function is called only when the 'showpid' command is entered.
+ * It displays the last MAX_PID_COUNT processes' id's that were spawned by the Mav-Shell
+ * NOTE: MAX_PID_COUNT refers to an integer.
+ */
 void printArray(pid_t *array)
 {
   int i = 0;
@@ -141,6 +159,11 @@ int main()
 
     // BEGIN STUDENT CODE IN MAIN()
 
+    // NOTE: Some student code appears in line 118.
+    // That code is an intialization of an array. It was separated from the
+    // rest of the student code so that the indexes in the array wouldn't be
+    // reset during every iteration of the while(1) loop.  
+
     //******* BEGIN STUDENT DECLARATION OF VARIABLES********
 
     // Rename/Relocate data, so that the variable name is more intuitive
@@ -158,8 +181,8 @@ int main()
 
     //******* END STUDENT DECLARATION OF VARIABLES********
 
-    //Concat the inputted command to each of the path strings
-    //If cmd is NULL a seg-fault will be caused when using strcat()
+    // Concat the inputted command to each of the path strings
+    // If cmd is NULL a seg-fault will be caused when using strcat()
     if (cmd != NULL)
     {
       if ((strcmp(cmd, "quit") == 0) || strcmp(cmd, "exit") == 0)
@@ -206,7 +229,6 @@ int main()
       return 0;
     }
 
-    // TODO If cd fails (see if there is a return value), print out "No such directory"
     else
     {
       int childStatus;
@@ -232,16 +254,6 @@ int main()
       }
     }
     // END STUDENT CODE IN MAIN()
-
-    // Now print the tokenized input as a debug check
-    // \TODO Remove this code and replace with your shell functionality
-
-    // int token_index  = 0;
-    // for( token_index = 0; token_index < token_count; token_index ++ )
-    // {
-    //   printf("token[%d] = %s\n", token_index, token[token_index] );
-    // }
-
     free( working_root );
 
   }
